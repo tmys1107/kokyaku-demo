@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>メニュー管理 - Web Studio</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div class="logo">
+        <span class="logo-mark">W</span>
+        <span>Web Studio <small style="color:var(--text-light);font-weight:normal;">管理画面</small></span>
+      </div>
+      <nav class="nav">
+        <a href="index.html">ダッシュボード</a>
+        <a href="customers.html">顧客</a>
+        <a href="requests.html">依頼管理</a>
+        <a href="menu.html" class="active">メニュー</a>
+      </nav>
+      <div class="user-info">
+        <span>管理者</span>
+        <a href="../login.html" class="logout-link">ログアウト</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h1 class="page-title" style="margin-bottom:4px;">メニュー管理</h1>
+        <p style="color:var(--text-light); font-size:0.95rem;">作業メニューの追加・編集・表示切り替えを行います。</p>
+      </div>
+      <button class="btn btn-primary" onclick="showToast('新規メニュー追加フォーム（デモ）')">＋ 新規メニュー追加</button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>メニュー名</th>
+            <th>説明</th>
+            <th>必要pt</th>
+            <th>状態</th>
+            <th style="width:200px;">操作</th>
+          </tr>
+        </thead>
+        <tbody id="menu-rows"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="../js/mock.js"></script>
+  <script>
+    document.getElementById('menu-rows').innerHTML = MockData.menuItems.map(m => `
+      <tr>
+        <td><strong>${m.title}</strong></td>
+        <td style="color:var(--text-light); font-size:0.88rem;">${m.description}</td>
+        <td><strong style="color:var(--primary);">${m.cost} pt</strong></td>
+        <td>
+          ${m.active
+            ? '<span class="badge badge-completed">表示中</span>'
+            : '<span class="badge badge-cancelled">非表示</span>'}
+        </td>
+        <td>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('編集フォーム（デモ）')">編集</button>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('${m.active ? "非表示" : "表示"}に切り替えました（デモ）')">
+            ${m.active ? '非表示にする' : '表示する'}
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  </script>
+</body>
+</html>

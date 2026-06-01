@@ -1,0 +1,11 @@
+# OS生成ファイル
+.DS_Store
+Thumbs.db
+
+# エディタ
+.vscode/
+.idea/
+
+# 環境変数（将来の本番用）
+.env
+.env.local

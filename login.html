@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ログイン - 顧客管理システム</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-page">
+
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo">
+        <span class="logo-mark">W</span>
+        <span>Web Studio</span>
+      </div>
+      <small>顧客管理ポータル</small>
+    </div>
+
+    <form onsubmit="event.preventDefault(); location.href='dashboard.html'">
+      <div class="form-group">
+        <label class="form-label">メールアドレス</label>
+        <input type="email" class="form-input" placeholder="example@email.com" value="hanako@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">パスワード</label>
+        <input type="password" class="form-input" placeholder="••••••••" value="demopassword">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">顧客としてログイン</button>
+    </form>
+
+    <div class="login-divider">または</div>
+
+    <button class="btn btn-secondary btn-block" onclick="location.href='admin/index.html'">
+      管理者としてログイン
+    </button>
+
+    <div class="demo-note">
+      これはデモ版です。任意の値で入力済みです。<br>
+      ボタンを押すと該当画面に遷移します。
+    </div>
+  </div>
+
+</body>
+</html>

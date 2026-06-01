@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>作業メニュー - Web Studio</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div class="logo">
+        <span class="logo-mark">W</span>
+        <span>Web Studio</span>
+      </div>
+      <nav class="nav">
+        <a href="dashboard.html">ダッシュボード</a>
+        <a href="menu.html" class="active">作業メニュー</a>
+        <a href="requests.html">依頼履歴</a>
+      </nav>
+      <div class="user-info">
+        <span id="user-name"></span>
+        <a href="login.html" class="logout-link">ログアウト</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <h1 class="page-title">作業メニュー</h1>
+    <p class="page-subtitle">必要なメニューを選んで「依頼する」ボタンから依頼してください。</p>
+
+    <div style="background:var(--primary-light); padding:14px 18px; border-radius:10px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-size:0.92rem;">現在の残ポイント</div>
+      <div style="font-weight:bold; color:var(--primary); font-size:1.2rem;" id="balance">— pt</div>
+    </div>
+
+    <div id="menu-grid" class="menu-grid"></div>
+  </main>
+
+  <!-- 依頼モーダル -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal">
+      <div class="modal-title">作業を依頼する</div>
+
+      <div style="background:var(--bg); padding:12px 14px; border-radius:8px; margin-bottom:16px;">
+        <div style="font-weight:bold;" id="modal-title">—</div>
+        <div style="font-size:0.85rem; color:var(--text-light);" id="modal-desc">—</div>
+        <div style="margin-top:8px; font-size:0.9rem;">
+          必要ポイント：<strong style="color:var(--primary);" id="modal-cost">—</strong>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">作業内容の補足（必須）</label>
+        <textarea class="form-textarea" placeholder="作業の内容、対象ページのURL、参考資料のリンク等を記入してください"></textarea>
+        <div class="form-help">ファイル共有が必要な場合はGoogleドライブ等のURLを貼ってください</div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+        <button class="btn btn-primary" onclick="submitRequest()">依頼を送信</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/mock.js"></script>
+  <script>
+    document.getElementById('user-name').textContent = MockData.currentUser.name;
+    document.getElementById('balance').textContent = `${MockData.pointBalance} pt`;
+
+    const activeMenus = MockData.menuItems.filter(m => m.active);
+    document.getElementById('menu-grid').innerHTML = activeMenus.map(m => `
+      <div class="menu-card">
+        <div class="menu-card-head">
+          <div class="menu-card-title">${m.title}</div>
+          <div class="menu-card-cost">${m.cost} pt</div>
+        </div>
+        <div class="menu-card-desc">${m.description}</div>
+        <button class="btn btn-primary" onclick="openModal('${m.id}')">依頼する</button>
+      </div>
+    `).join('');
+
+    let selectedMenu = null;
+    function openModal(id) {
+      selectedMenu = MockData.menuItems.find(m => m.id === id);
+      document.getElementById('modal-title').textContent = selectedMenu.title;
+      document.getElementById('modal-desc').textContent = selectedMenu.description;
+      document.getElementById('modal-cost').textContent = `${selectedMenu.cost} pt`;
+      document.getElementById('modal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+    function submitRequest() {
+      closeModal();
+      showToast(`「${selectedMenu.title}」の依頼を送信しました（デモ）`);
+      setTimeout(() => location.href = 'requests.html', 1200);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ダッシュボード - Web Studio</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div class="logo">
+        <span class="logo-mark">W</span>
+        <span>Web Studio</span>
+      </div>
+      <nav class="nav">
+        <a href="dashboard.html" class="active">ダッシュボード</a>
+        <a href="menu.html">作業メニュー</a>
+        <a href="requests.html">依頼履歴</a>
+      </nav>
+      <div class="user-info">
+        <span id="user-name"></span>
+        <a href="login.html" class="logout-link">ログアウト</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <h1 class="page-title">ようこそ、<span id="welcome-name"></span>さん</h1>
+    <p class="page-subtitle">本日も Web Studio をご利用いただきありがとうございます。</p>
+
+    <!-- ポイント残高カード -->
+    <div class="balance-card">
+      <div class="balance-label">現在の残ポイント</div>
+      <div class="balance-value" id="balance">— <span class="unit">pt</span></div>
+      <div class="balance-sub">
+        <span id="plan-info"></span>
+        <span id="next-grant"></span>
+      </div>
+    </div>
+
+    <!-- クイックアクション -->
+    <div class="grid-2 section">
+      <a href="menu.html" class="card" style="text-decoration:none; display:flex; align-items:center; gap:16px;">
+        <div style="width:48px;height:48px;background:var(--primary-light);color:var(--primary);border-radius:10px;display:grid;place-items:center;font-size:1.4rem;">＋</div>
+        <div>
+          <div style="font-weight:bold;">新しく依頼する</div>
+          <div style="font-size:0.85rem;color:var(--text-light);">作業メニューから選んで依頼</div>
+        </div>
+      </a>
+      <a href="requests.html" class="card" style="text-decoration:none; display:flex; align-items:center; gap:16px;">
+        <div style="width:48px;height:48px;background:#dbeafe;color:#1e40af;border-radius:10px;display:grid;place-items:center;font-size:1.4rem;">📋</div>
+        <div>
+          <div style="font-weight:bold;">依頼の進捗を確認</div>
+          <div style="font-size:0.85rem;color:var(--text-light);">対応中・完了の状況</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- 最近の依頼 -->
+    <section class="section">
+      <div class="section-head">
+        <div class="section-title">最近の依頼</div>
+        <a href="requests.html" style="font-size:0.88rem; color:var(--primary);">すべて見る →</a>
+      </div>
+      <div id="recent-requests"></div>
+    </section>
+  </main>
+
+  <script src="js/mock.js"></script>
+  <script>
+    const u = MockData.currentUser;
+    document.getElementById('user-name').textContent = u.name;
+    document.getElementById('welcome-name').textContent = u.name;
+    document.getElementById('balance').innerHTML = `${MockData.pointBalance} <span class="unit">pt</span>`;
+    document.getElementById('plan-info').textContent = `${u.planLabel}プラン（毎月${u.monthlyPoints}pt付与）`;
+    document.getElementById('next-grant').textContent = `次回付与：2026年7月1日`;
+
+    const recent = MockData.myRequests.slice(0, 3);
+    document.getElementById('recent-requests').innerHTML = recent.map(r => `
+      <div class="request-card">
+        <div class="request-card-head">
+          <div>
+            ${fmt.statusBadge(r.status)}
+            <span class="request-card-title" style="margin-left:8px;">${r.menuTitle}</span>
+          </div>
+          <div class="request-card-meta">
+            <span class="request-card-cost">-${r.cost}pt</span> ・ ${fmt.date(r.createdAt)}
+          </div>
+        </div>
+        <div class="request-card-comment">${r.comment}</div>
+      </div>
+    `).join('');
+  </script>
+</body>
+</html>
