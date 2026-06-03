@@ -970,11 +970,23 @@ a { color: inherit; text-decoration: none; }
 .coracco .c-req-badge.done { background: var(--c-done-bg); color: var(--c-done-tx); }
 .coracco .c-req-arrow { color: #B8BECB; font-size: 1.3rem; flex-shrink: 0; }
 
-@media (max-width: 520px) {
+.coracco .c-logo { min-width: 0; }
+.coracco .c-user { flex-shrink: 0; }
+
+@media (max-width: 560px) {
   .coracco .c-brand { font-size: 1.15rem; }
   .coracco .c-user { font-size: 0.82rem; gap: 8px; }
   .coracco .c-logo-mark { width: 38px; height: 38px; font-size: 1.2rem; }
   .coracco .c-ticket-remain strong { font-size: 2.7rem; }
+  /* 屋号とユーザー名が重ならないよう、名前は隠して人物アイコンのみに */
+  .coracco .c-user-name #user-name { display: none; }
+}
+
+@media (max-width: 380px) {
+  .coracco .c-brand { font-size: 1rem; }
+  .coracco .c-divider-v { display: none; }
+  .coracco .c-logout { font-size: 0; }       /* ラベルを隠してアイコンのみ */
+  .coracco .c-logout::before { content: "⤴"; font-size: 1rem; }
 }
 
 /* ===== coracco 全ページ統一：コンテンツ調整 ===== */
