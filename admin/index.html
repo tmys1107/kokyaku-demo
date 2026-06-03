@@ -78,7 +78,7 @@
             <span style="color:var(--text-light); font-size:0.88rem; margin-left:8px;">${r.customer}様</span>
           </div>
           <div class="request-card-meta">
-            <span class="request-card-cost">${r.cost}pt</span> ・ ${fmt.date(r.createdAt)}
+            <span class="request-card-cost">${r.estTickets != null ? r.estTickets + '枚（見積）' : '見積もり中'}</span> ・ ${fmt.date(r.createdAt)}
           </div>
         </div>
         <div class="request-card-comment">${r.comment}</div>

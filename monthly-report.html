@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>月次レポート - Web Studio</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div class="logo">
+        <span class="logo-mark">W</span>
+        <span>Web Studio</span>
+      </div>
+      <nav class="nav">
+        <a href="dashboard.html">ダッシュボード</a>
+        <a href="menu.html">施策メニュー</a>
+        <a href="requests.html">依頼履歴</a>
+        <a href="monthly-policy.html">月次方針</a>
+        <a href="monthly-report.html" class="active">月次レポート</a>
+      </nav>
+      <div class="user-info">
+        <span id="user-name"></span>
+        <a href="login.html" class="logout-link">ログアウト</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main" style="max-width: 860px;">
+    <h1 class="page-title">月次レポート</h1>
+    <p class="page-subtitle">毎月の成果・数値と、振り返りをまとめています。月を選んで確認してください。</p>
+
+    <div class="report-month-tabs" id="month-tabs"></div>
+
+    <div id="report-body"></div>
+  </main>
+
+  <script src="js/mock.js"></script>
+  <script>
+    document.getElementById('user-name').textContent = MockData.currentUser.name;
+
+    const reports = MockData.monthlyReports;
+    let current = 0;
+
+    document.getElementById('month-tabs').innerHTML = reports.map((r, i) => `
+      <button class="filter-pill ${i === 0 ? 'active' : ''}" data-i="${i}">${r.month}</button>
+    `).join('');
+
+    function render() {
+      const r = reports[current];
+      const s = r.summary;
+      document.getElementById('report-body').innerHTML = `
+        <div class="card" style="margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <div style="font-weight:bold; font-size:1.05rem;">${r.month} レポート資料</div>
+            <div style="font-size:0.85rem; color:var(--text-light);">数値の詳細・スクリーンショットは資料をご覧ください。</div>
+          </div>
+          <a href="${r.driveUrl}" target="_blank" class="btn btn-primary btn-sm">📄 資料を開く</a>
+        </div>
+
+        <div class="section-title" style="margin-bottom:8px;">主要数値</div>
+        <div class="metric-grid">
+          ${r.metrics.map(m => `
+            <div class="metric-card">
+              <div class="metric-label">${m.label}</div>
+              <div class="metric-value">${m.value}</div>
+              ${m.delta ? `<div class="metric-delta ${m.delta.startsWith('-') ? 'down' : 'up'}">前月比 ${m.delta}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="card">
+          <div class="card-title">今月の振り返り</div>
+          <ul class="report-summary-list">
+            <li><span class="rs-label">実施した施策</span><span>${s.done.join('／')}</span></li>
+            <li><span class="rs-label">使用チケット</span><span>${s.usedTickets}枚（残 ${s.remainTickets}枚）</span></li>
+            <li><span class="rs-label">よかった点</span><span>${s.good}</span></li>
+            <li><span class="rs-label">改善が必要な点</span><span>${s.improve}</span></li>
+            <li><span class="rs-label">来月の提案</span><span>${s.nextProposal}</span></li>
+            <li><span class="rs-label">確認事項</span><span>${s.confirm}</span></li>
+          </ul>
+        </div>
+      `;
+    }
+
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        current = parseInt(btn.dataset.i, 10);
+        render();
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>

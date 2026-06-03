@@ -31,7 +31,7 @@
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
       <div>
         <h1 class="page-title" style="margin-bottom:4px;">メニュー管理</h1>
-        <p style="color:var(--text-light); font-size:0.95rem;">作業メニューの追加・編集・表示切り替えを行います。</p>
+        <p style="color:var(--text-light); font-size:0.95rem;">施策メニューの追加・編集・表示切り替えを行います。</p>
       </div>
       <button class="btn btn-primary" onclick="showToast('新規メニュー追加フォーム（デモ）')">＋ 新規メニュー追加</button>
     </div>
@@ -42,7 +42,7 @@
           <tr>
             <th>メニュー名</th>
             <th>説明</th>
-            <th>必要pt</th>
+            <th>目安チケット</th>
             <th>状態</th>
             <th style="width:200px;">操作</th>
           </tr>
@@ -58,7 +58,7 @@
       <tr>
         <td><strong>${m.title}</strong></td>
         <td style="color:var(--text-light); font-size:0.88rem;">${m.description}</td>
-        <td><strong style="color:var(--primary);">${m.cost} pt</strong></td>
+        <td><strong style="color:var(--primary);">目安 ${m.estCost} 枚</strong></td>
         <td>
           ${m.active
             ? '<span class="badge badge-completed">表示中</span>'

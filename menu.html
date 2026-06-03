@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>作業メニュー - Web Studio</title>
+  <title>施策メニュー一覧 - Web Studio</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -16,8 +16,10 @@
       </div>
       <nav class="nav">
         <a href="dashboard.html">ダッシュボード</a>
-        <a href="menu.html" class="active">作業メニュー</a>
+        <a href="menu.html" class="active">施策メニュー</a>
         <a href="requests.html">依頼履歴</a>
+        <a href="monthly-policy.html">月次方針</a>
+        <a href="monthly-report.html">月次レポート</a>
       </nav>
       <div class="user-info">
         <span id="user-name"></span>
@@ -27,34 +29,59 @@
   </header>
 
   <main class="main">
-    <h1 class="page-title">作業メニュー</h1>
-    <p class="page-subtitle">必要なメニューを選んで「依頼する」ボタンから依頼してください。</p>
+    <h1 class="page-title">施策メニュー一覧</h1>
+    <p class="page-subtitle">気になる施策を選んで依頼してください。表示は<strong>目安チケット数</strong>です。実際の必要数は内容を確認のうえお見積もりし、ご承認いただいてから確定します。</p>
 
     <div style="background:var(--primary-light); padding:14px 18px; border-radius:10px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center;">
-      <div style="font-size:0.92rem;">現在の残ポイント</div>
-      <div style="font-weight:bold; color:var(--primary); font-size:1.2rem;" id="balance">— pt</div>
+      <div style="font-size:0.92rem;">現在の残チケット</div>
+      <div style="font-weight:bold; color:var(--primary); font-size:1.2rem;" id="balance">— 枚</div>
     </div>
 
+    <!-- ご提案施策 -->
+    <section class="proposed-section">
+      <div class="proposed-head"><span class="star">★</span> ご提案施策</div>
+      <div class="proposed-sub">今月、特におすすめしたい施策です。月次方針に沿ってご提案しています。</div>
+      <div id="proposed-grid" class="menu-grid"></div>
+    </section>
+
+    <!-- 通常メニュー -->
+    <div class="section-title" style="margin-bottom:14px;">すべての施策メニュー</div>
     <div id="menu-grid" class="menu-grid"></div>
   </main>
 
   <!-- 依頼モーダル -->
   <div class="modal-backdrop" id="modal">
     <div class="modal">
-      <div class="modal-title">作業を依頼する</div>
+      <div class="modal-title">施策を依頼する</div>
 
       <div style="background:var(--bg); padding:12px 14px; border-radius:8px; margin-bottom:16px;">
         <div style="font-weight:bold;" id="modal-title">—</div>
         <div style="font-size:0.85rem; color:var(--text-light);" id="modal-desc">—</div>
         <div style="margin-top:8px; font-size:0.9rem;">
-          必要ポイント：<strong style="color:var(--primary);" id="modal-cost">—</strong>
+          目安チケット：<strong style="color:var(--primary);" id="modal-cost">—</strong>
+          <span class="cost-hint">（確定はお見積もり後）</span>
         </div>
       </div>
 
       <div class="form-group">
-        <label class="form-label">作業内容の補足（必須）</label>
-        <textarea class="form-textarea" placeholder="作業の内容、対象ページのURL、参考資料のリンク等を記入してください"></textarea>
-        <div class="form-help">ファイル共有が必要な場合はGoogleドライブ等のURLを貼ってください</div>
+        <label class="form-label">依頼内容（必須）</label>
+        <textarea class="form-textarea" id="f-content" placeholder="やりたいこと、対象ページのURL、参考にしたいイメージなどをご記入ください"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">希望納期</label>
+        <input type="date" class="form-input" id="f-due">
+        <div class="form-help">あくまで希望で大丈夫です。難しい場合はご相談します。</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">参考資料・写真の添付</label>
+        <label class="file-drop" for="f-file">
+          クリックして写真・資料を選択（複数可）
+        </label>
+        <input type="file" id="f-file" multiple accept="image/*,.pdf" style="display:none;">
+        <div id="file-list"></div>
+        <div class="form-help">画像・PDFを複数添付できます。Googleドライブ等のURLを依頼内容に貼ってもOKです。</div>
       </div>
 
       <div class="modal-actions">
@@ -67,35 +94,64 @@
   <script src="js/mock.js"></script>
   <script>
     document.getElementById('user-name').textContent = MockData.currentUser.name;
-    document.getElementById('balance').textContent = `${MockData.pointBalance} pt`;
+    document.getElementById('balance').textContent = `${MockData.tickets.remaining} 枚`;
 
+    // ご提案施策
+    document.getElementById('proposed-grid').innerHTML = MockData.proposedItems.map(m => `
+      <div class="menu-card">
+        <div class="menu-card-badge">${m.badge}</div>
+        <div class="menu-card-head">
+          <div class="menu-card-title">${m.title}</div>
+          <div class="menu-card-cost">目安 ${m.estCost} 枚</div>
+        </div>
+        <div class="menu-card-desc">${m.description}</div>
+        <button class="btn btn-primary" onclick="openModal('${m.id}', true)">この施策を依頼する</button>
+      </div>
+    `).join('');
+
+    // 通常メニュー
     const activeMenus = MockData.menuItems.filter(m => m.active);
     document.getElementById('menu-grid').innerHTML = activeMenus.map(m => `
       <div class="menu-card">
         <div class="menu-card-head">
-          <div class="menu-card-title">${m.title}</div>
-          <div class="menu-card-cost">${m.cost} pt</div>
+          <div class="menu-card-title">${m.title}<span class="menu-card-cat">${m.category}</span></div>
+          <div class="menu-card-cost">目安 ${m.estCost} 枚</div>
         </div>
         <div class="menu-card-desc">${m.description}</div>
-        <button class="btn btn-primary" onclick="openModal('${m.id}')">依頼する</button>
+        <button class="btn btn-primary" onclick="openModal('${m.id}', false)">依頼する</button>
       </div>
     `).join('');
 
+    // モーダル
     let selectedMenu = null;
-    function openModal(id) {
-      selectedMenu = MockData.menuItems.find(m => m.id === id);
+    function openModal(id, isProposed) {
+      const pool = isProposed ? MockData.proposedItems : MockData.menuItems;
+      selectedMenu = pool.find(m => m.id === id);
       document.getElementById('modal-title').textContent = selectedMenu.title;
       document.getElementById('modal-desc').textContent = selectedMenu.description;
-      document.getElementById('modal-cost').textContent = `${selectedMenu.cost} pt`;
+      document.getElementById('modal-cost').textContent = `${selectedMenu.estCost} 枚`;
+      document.getElementById('f-content').value = '';
+      document.getElementById('f-due').value = '';
+      document.getElementById('file-list').innerHTML = '';
+      document.getElementById('f-file').value = '';
       document.getElementById('modal').classList.add('active');
     }
     function closeModal() {
       document.getElementById('modal').classList.remove('active');
     }
+
+    // ファイル選択プレビュー（デモ）
+    document.getElementById('f-file').addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      document.getElementById('file-list').innerHTML = files.map(f =>
+        `<span class="file-chip">📎 ${f.name}</span>`
+      ).join('');
+    });
+
     function submitRequest() {
       closeModal();
-      showToast(`「${selectedMenu.title}」の依頼を送信しました（デモ）`);
-      setTimeout(() => location.href = 'requests.html', 1200);
+      showToast(`「${selectedMenu.title}」の依頼を送信しました。お見積もりをお待ちください（デモ）`);
+      setTimeout(() => location.href = 'requests.html', 1400);
     }
   </script>
 </body>

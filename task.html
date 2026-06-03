@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>タスク詳細 - Web Studio</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div class="logo">
+        <span class="logo-mark">W</span>
+        <span>Web Studio</span>
+      </div>
+      <nav class="nav">
+        <a href="dashboard.html">ダッシュボード</a>
+        <a href="menu.html">施策メニュー</a>
+        <a href="requests.html" class="active">依頼履歴</a>
+        <a href="monthly-policy.html">月次方針</a>
+        <a href="monthly-report.html">月次レポート</a>
+      </nav>
+      <div class="user-info">
+        <span id="user-name"></span>
+        <a href="login.html" class="logout-link">ログアウト</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main" style="max-width: 760px;">
+    <a href="requests.html" style="font-size:0.88rem; color:var(--primary);">← 依頼履歴に戻る</a>
+
+    <div id="task-body" style="margin-top:14px;"></div>
+  </main>
+
+  <!-- 修正依頼モーダル -->
+  <div class="modal-backdrop" id="revise-modal">
+    <div class="modal">
+      <div class="modal-title">修正を依頼する</div>
+      <div class="form-group">
+        <label class="form-label">修正してほしい内容</label>
+        <textarea class="form-textarea" id="revise-comment" placeholder="例：2枚目の文字を大きくしてください／色味をもう少し明るくしてください"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeRevise()">キャンセル</button>
+        <button class="btn btn-primary" onclick="submitRevise()">修正を依頼する</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/mock.js"></script>
+  <script>
+    document.getElementById('user-name').textContent = MockData.currentUser.name;
+
+    const id = new URLSearchParams(location.search).get('id');
+    const task = MockData.myRequests.find(r => r.id === id);
+
+    if (!task) {
+      document.getElementById('task-body').innerHTML =
+        '<p class="empty-msg">タスクが見つかりませんでした。</p>';
+    } else {
+      render();
+    }
+
+    function render() {
+      const needs = fmt.needsClientAction(task.status);
+      const ticketText = task.confirmedTickets != null
+        ? `${task.confirmedTickets}枚（確定）`
+        : (task.estTickets != null ? `${task.estTickets}枚（お見積もり）` : '見積もり中');
+
+      document.getElementById('task-body').innerHTML = `
+        <div class="card" style="margin-bottom:20px;">
+          <div style="margin-bottom:10px;">
+            ${fmt.statusBadge(task.status)}
+            ${needs ? '<span class="action-flag" style="margin-left:6px;">要対応</span>' : ''}
+          </div>
+          <h1 class="page-title" style="margin-bottom:12px;">${task.menuTitle}</h1>
+          <div style="display:flex; gap:24px; flex-wrap:wrap; font-size:0.9rem; color:var(--text-light);">
+            <div>チケット：<strong style="color:var(--primary);">${ticketText}</strong></div>
+            <div>依頼日：${fmt.date(task.createdAt)}</div>
+            ${task.dueDate ? `<div>希望納期：${fmt.date(task.dueDate)}</div>` : ''}
+          </div>
+          <div class="request-card-comment" style="margin-top:14px;">${task.comment}</div>
+        </div>
+
+        ${actionBarHtml()}
+
+        <div class="card">
+          <div class="card-title">対応履歴</div>
+          <div class="timeline">
+            ${[...task.timeline].reverse().map(timelineHtml).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // ステータス別アクションバー
+    function actionBarHtml() {
+      if (task.status === 'quote_ready') {
+        return `
+          <div class="approve-bar">
+            <div class="approve-bar-title">お見積もりが届いています（${task.estTickets}枚）</div>
+            <div class="approve-bar-sub">内容をご確認のうえ、承認いただくとチケットが確定し作業を開始します。</div>
+            <div class="approve-actions">
+              <button class="btn btn-success" onclick="approveQuote()">この見積もりで承認する</button>
+              <button class="btn btn-secondary" onclick="consult()">一度相談したい</button>
+            </div>
+          </div>`;
+      }
+      if (task.status === 'review') {
+        return `
+          <div class="approve-bar">
+            <div class="approve-bar-title">初稿が届いています。ご確認ください</div>
+            <div class="approve-bar-sub">内容でよろしければ承認、直したい点があれば修正をご依頼ください。</div>
+            <div class="approve-actions">
+              <button class="btn btn-success" onclick="approveFinal()">この内容でOK</button>
+              <button class="btn btn-secondary" onclick="openRevise()">修正を依頼する</button>
+              <button class="btn btn-secondary" onclick="consult()">一度相談したい</button>
+            </div>
+          </div>`;
+      }
+      return '';
+    }
+
+    function timelineHtml(ev) {
+      const cls = { approved: 't-approved', draft: 't-draft', revise: 't-revise', completed: 't-completed' }[ev.type] || '';
+      let extra = '';
+      if (ev.file) extra = `<div class="timeline-file">📎 ${ev.file}</div>`;
+      if (ev.comment) extra = `<div class="timeline-extra">「${ev.comment}」</div>`;
+      if (ev.by) extra += `<div class="timeline-extra">最終承認者：${ev.by}</div>`;
+      return `
+        <div class="timeline-item ${cls}">
+          <div class="timeline-time">${ev.at}</div>
+          <div class="timeline-text">${ev.text}</div>
+          ${extra}
+        </div>`;
+    }
+
+    // ===== アクション（デモ：画面上だけ更新） =====
+    function nowStr() {
+      const d = new Date();
+      const p = (n) => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+    }
+
+    function approveQuote() {
+      task.timeline.push({ type: 'approved', at: nowStr(), text: `見積もりを承認しました（${task.estTickets}チケット確定）` });
+      task.confirmedTickets = task.estTickets;
+      task.status = 'in_progress';
+      showToast('見積もりを承認しました。作業を開始します（デモ）');
+      render();
+    }
+
+    function approveFinal() {
+      task.timeline.push({ type: 'completed', at: nowStr(), text: 'この内容で承認しました（完了）', by: MockData.currentUser.name });
+      task.status = 'completed';
+      showToast('承認しました。ありがとうございます（デモ）');
+      render();
+    }
+
+    function consult() {
+      showToast('担当者に相談メッセージを送信しました（デモ）');
+    }
+
+    function openRevise() { document.getElementById('revise-modal').classList.add('active'); }
+    function closeRevise() { document.getElementById('revise-modal').classList.remove('active'); }
+    function submitRevise() {
+      const c = document.getElementById('revise-comment').value.trim();
+      if (!c) { showToast('修正内容をご入力ください'); return; }
+      task.timeline.push({ type: 'revise', at: nowStr(), text: '修正を依頼しました', comment: c });
+      task.status = 'revising';
+      closeRevise();
+      document.getElementById('revise-comment').value = '';
+      showToast('修正を依頼しました（デモ）');
+      render();
+    }
+  </script>
+</body>
+</html>

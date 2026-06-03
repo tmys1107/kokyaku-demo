@@ -29,7 +29,7 @@
 
   <main class="main">
     <h1 class="page-title">顧客管理</h1>
-    <p class="page-subtitle">契約中の顧客一覧。ポイントの付与や調整を行えます。</p>
+    <p class="page-subtitle">契約中の顧客一覧。チケットの付与や調整を行えます。</p>
 
     <div class="table-wrap">
       <table class="data-table">
@@ -38,7 +38,7 @@
             <th>顧客名</th>
             <th>メールアドレス</th>
             <th>プラン</th>
-            <th>残ポイント</th>
+            <th>残チケット</th>
             <th style="width:140px;">操作</th>
           </tr>
         </thead>
@@ -47,20 +47,20 @@
     </div>
   </main>
 
-  <!-- ポイント付与モーダル -->
+  <!-- チケット付与モーダル -->
   <div class="modal-backdrop" id="modal">
     <div class="modal">
-      <div class="modal-title">ポイント付与・調整</div>
+      <div class="modal-title">チケット付与・調整</div>
 
       <div style="background:var(--bg); padding:12px 14px; border-radius:8px; margin-bottom:16px;">
         <div style="font-weight:bold;" id="modal-customer">—</div>
         <div style="font-size:0.85rem; color:var(--text-light);">
-          現在の残ポイント：<span id="modal-balance">—</span> pt
+          現在の残チケット：<span id="modal-balance">—</span> 枚
         </div>
       </div>
 
       <div class="form-group">
-        <label class="form-label">付与・調整するポイント数</label>
+        <label class="form-label">付与・調整するチケット数</label>
         <input type="number" class="form-input" id="modal-points" value="15" placeholder="例: 15">
         <div class="form-help">マイナス値で減算もできます</div>
       </div>
@@ -89,9 +89,9 @@
         <td><strong>${c.name}</strong></td>
         <td>${c.email}</td>
         <td><span class="badge badge-plan">${c.planLabel}</span></td>
-        <td><strong style="color:var(--primary);">${c.balance} pt</strong></td>
+        <td><strong style="color:var(--primary);">${c.balance} 枚</strong></td>
         <td>
-          <button class="btn btn-primary btn-sm" onclick="openModal('${c.id}')">ポイント付与</button>
+          <button class="btn btn-primary btn-sm" onclick="openModal('${c.id}')">チケット付与</button>
         </td>
       </tr>
     `).join('');
@@ -110,7 +110,7 @@
     function submitGrant() {
       const pts = document.getElementById('modal-points').value;
       closeModal();
-      showToast(`${selected.name}様に ${pts}pt を付与しました（デモ）`);
+      showToast(`${selected.name}様に ${pts}枚 を付与しました（デモ）`);
     }
   </script>
 </body>

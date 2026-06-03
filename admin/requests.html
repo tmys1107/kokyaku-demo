@@ -33,10 +33,11 @@
 
     <div class="filter-pills">
       <button class="filter-pill active" data-status="all">すべて</button>
-      <button class="filter-pill" data-status="pending">受付中</button>
+      <button class="filter-pill" data-status="pending">見積もり中</button>
+      <button class="filter-pill" data-status="quote_ready">承認待ち</button>
       <button class="filter-pill" data-status="in_progress">対応中</button>
+      <button class="filter-pill" data-status="review">確認待ち</button>
       <button class="filter-pill" data-status="completed">完了</button>
-      <button class="filter-pill" data-status="cancelled">キャンセル</button>
     </div>
 
     <div id="request-list"></div>
@@ -50,14 +51,20 @@
       switch (status) {
         case 'pending':
           return `
-            <button class="btn btn-primary btn-sm" onclick="updateStatus('in_progress')">対応開始</button>
+            <button class="btn btn-primary btn-sm" onclick="updateStatus('quote_ready')">見積もりを送る</button>
             <button class="btn btn-secondary btn-sm" onclick="updateStatus('cancelled')">キャンセル</button>
           `;
+        case 'quote_ready':
+          return `<span style="color:var(--text-light); font-size:0.85rem;">顧客の承認待ち</span>`;
         case 'in_progress':
           return `
+            <button class="btn btn-primary btn-sm" onclick="updateStatus('review')">初稿をアップ</button>
             <button class="btn btn-success btn-sm" onclick="updateStatus('completed')">完了にする</button>
-            <button class="btn btn-secondary btn-sm" onclick="updateStatus('cancelled')">キャンセル</button>
           `;
+        case 'review':
+          return `<span style="color:var(--text-light); font-size:0.85rem;">顧客の確認待ち</span>`;
+        case 'revising':
+          return `<button class="btn btn-primary btn-sm" onclick="updateStatus('review')">修正版をアップ</button>`;
         case 'completed':
         case 'cancelled':
           return `<span style="color:var(--text-light); font-size:0.85rem;">対応済み</span>`;
@@ -82,7 +89,7 @@
               <span style="color:var(--text-light); font-size:0.88rem; margin-left:8px;">${r.customer}様</span>
             </div>
             <div class="request-card-meta">
-              <span class="request-card-cost">${r.cost}pt</span> ・ ${fmt.date(r.createdAt)}
+              <span class="request-card-cost">${r.estTickets != null ? r.estTickets + '枚（見積）' : '見積もり中'}</span> ・ ${fmt.date(r.createdAt)}
             </div>
           </div>
           <div class="request-card-comment">${r.comment}</div>

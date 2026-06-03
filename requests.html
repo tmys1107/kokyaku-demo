@@ -16,8 +16,10 @@
       </div>
       <nav class="nav">
         <a href="dashboard.html">ダッシュボード</a>
-        <a href="menu.html">作業メニュー</a>
+        <a href="menu.html">施策メニュー</a>
         <a href="requests.html" class="active">依頼履歴</a>
+        <a href="monthly-policy.html">月次方針</a>
+        <a href="monthly-report.html">月次レポート</a>
       </nav>
       <div class="user-info">
         <span id="user-name"></span>
@@ -28,15 +30,10 @@
 
   <main class="main">
     <h1 class="page-title">依頼履歴</h1>
-    <p class="page-subtitle">これまでの依頼内容と進捗状況を確認できます。</p>
+    <p class="page-subtitle">月ごとに依頼内容と進捗を確認できます。カードをタップすると詳細・承認画面が開きます。</p>
 
-    <div class="filter-pills">
-      <button class="filter-pill active" data-status="all">すべて</button>
-      <button class="filter-pill" data-status="pending">受付中</button>
-      <button class="filter-pill" data-status="in_progress">対応中</button>
-      <button class="filter-pill" data-status="completed">完了</button>
-      <button class="filter-pill" data-status="cancelled">キャンセル</button>
-    </div>
+    <!-- 月別フィルター -->
+    <div class="filter-pills" id="month-pills"></div>
 
     <div id="request-list"></div>
   </main>
@@ -45,39 +42,74 @@
   <script>
     document.getElementById('user-name').textContent = MockData.currentUser.name;
 
-    let currentFilter = 'all';
+    // 月キー（YYYY-MM）でグルーピング
+    const monthKey = (s) => s.slice(0, 7);
+    const monthLabel = (key) => {
+      const [y, m] = key.split('-');
+      return `${y}年${parseInt(m, 10)}月`;
+    };
+    const months = [...new Set(MockData.myRequests.map(r => monthKey(r.createdAt)))]
+      .sort().reverse();
+
+    let currentMonth = 'all';
+
+    // 月別ピル
+    const pills = ['all', ...months];
+    document.getElementById('month-pills').innerHTML = pills.map(k => `
+      <button class="filter-pill ${k === 'all' ? 'active' : ''}" data-month="${k}">
+        ${k === 'all' ? 'すべて' : monthLabel(k)}
+      </button>
+    `).join('');
 
     function render() {
-      const list = currentFilter === 'all'
-        ? MockData.myRequests
-        : MockData.myRequests.filter(r => r.status === currentFilter);
+      const groups = {};
+      MockData.myRequests
+        .filter(r => currentMonth === 'all' || monthKey(r.createdAt) === currentMonth)
+        .forEach(r => {
+          const k = monthKey(r.createdAt);
+          (groups[k] = groups[k] || []).push(r);
+        });
 
+      const keys = Object.keys(groups).sort().reverse();
       const container = document.getElementById('request-list');
-      if (list.length === 0) {
+      if (keys.length === 0) {
         container.innerHTML = '<p class="empty-msg">該当する依頼はありません。</p>';
         return;
       }
-      container.innerHTML = list.map(r => `
-        <div class="request-card">
+      container.innerHTML = keys.map(k => `
+        <div class="section">
+          <div class="section-title" style="font-size:0.95rem; color:var(--text-light); margin-bottom:10px;">${monthLabel(k)}（${groups[k].length}件）</div>
+          ${groups[k].map(cardHtml).join('')}
+        </div>
+      `).join('');
+    }
+
+    function cardHtml(r) {
+      const needs = fmt.needsClientAction(r.status);
+      const ticketText = r.confirmedTickets != null
+        ? `${r.confirmedTickets}枚（確定）`
+        : (r.estTickets != null ? `${r.estTickets}枚（見積）` : '見積もり中');
+      return `
+        <a href="task.html?id=${r.id}" class="request-card ${needs ? 'needs-action' : ''}" style="display:block;">
           <div class="request-card-head">
             <div>
               ${fmt.statusBadge(r.status)}
+              ${needs ? '<span class="action-flag">要対応</span>' : ''}
               <span class="request-card-title" style="margin-left:8px;">${r.menuTitle}</span>
             </div>
             <div class="request-card-meta">
-              <span class="request-card-cost">-${r.cost}pt</span> ・ ${fmt.date(r.createdAt)}
+              <span class="request-card-cost">${ticketText}</span> ・ ${fmt.date(r.createdAt)}
             </div>
           </div>
           <div class="request-card-comment">${r.comment}</div>
-        </div>
-      `).join('');
+        </a>`;
     }
 
     document.querySelectorAll('.filter-pill').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        currentFilter = btn.dataset.status;
+        currentMonth = btn.dataset.month;
         render();
       });
     });
