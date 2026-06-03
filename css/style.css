@@ -865,3 +865,110 @@ a { color: inherit; text-decoration: none; }
   .info-row { flex-wrap: wrap; }
   .info-row .info-label { width: auto; }
 }
+
+/* ===== coracco ダッシュボード（リデザイン・dashboard.html専用テーマ） ===== */
+.coracco {
+  --c-bg:#F8F4ED; --c-text:#20293A; --c-logo:#F28A3D;
+  --c-blue1:#243F9B; --c-blue2:#4154D8;
+  --c-gauge-used:#F28A3D; --c-gauge-rest:#FFF8F0;
+  --c-active:#2F5BDB; --c-link:#2F5BDB;
+  --c-warnbg:#FFF4EE; --c-warntx:#D85A4A;
+  --c-card:#FFFFFF; --c-line:#E7E0D6;
+  --c-prog-bg:#E9EEFF; --c-prog-tx:#2F5BDB;
+  --c-done-bg:#E8F4E6; --c-done-tx:#3B8A4D;
+  background: var(--c-bg);
+  color: var(--c-text);
+}
+
+/* ヘッダー */
+.coracco .c-header { padding: 18px 18px 4px; }
+.coracco .c-header-inner {
+  max-width: 760px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: nowrap;
+}
+.coracco .c-logo { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.coracco .c-logo-mark {
+  width: 44px; height: 44px; flex-shrink: 0;
+  background: var(--c-logo); color: #fff; border-radius: 12px;
+  display: grid; place-items: center; font-weight: 800; font-size: 1.4rem;
+}
+.coracco .c-brand { font-size: 1.4rem; font-weight: 800; color: var(--c-text); white-space: nowrap; }
+.coracco .c-user { display: flex; align-items: center; gap: 12px; white-space: nowrap; font-size: 0.95rem; }
+.coracco .c-user-name { display: inline-flex; align-items: center; gap: 6px; }
+.coracco .c-divider-v { width: 1px; height: 20px; background: var(--c-line); }
+.coracco .c-logout { color: var(--c-text); display: inline-flex; align-items: center; gap: 5px; }
+
+.coracco .c-main { max-width: 760px; margin: 0 auto; padding: 10px 18px 40px; }
+
+/* メニュー（タブ型カード） */
+.coracco .c-nav-card {
+  background: var(--c-card); border-radius: 18px; padding: 14px 8px;
+  display: flex; gap: 4px; overflow-x: auto; margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.coracco .c-tab {
+  flex: 1 0 auto; min-width: 64px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 6px 8px 10px; color: var(--c-text);
+  font-size: 0.78rem; font-weight: 600; position: relative;
+}
+.coracco .c-tab-ico { font-size: 1.25rem; line-height: 1; }
+.coracco .c-tab.active { color: var(--c-active); }
+.coracco .c-tab.active::after {
+  content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 34px; height: 3px; border-radius: 3px; background: var(--c-active);
+}
+
+/* チケットカード */
+.coracco .c-ticket-card {
+  background: linear-gradient(160deg, var(--c-blue1), var(--c-blue2));
+  color: #fff; border-radius: 22px; padding: 24px 22px;
+  box-shadow: 0 12px 24px rgba(36,63,155,.22); margin-bottom: 24px;
+}
+.coracco .c-ticket-head { display: flex; align-items: center; gap: 10px; font-size: 1.15rem; font-weight: 700; }
+.coracco .c-ticket-ico {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,.16); display: grid; place-items: center; font-size: 1.05rem;
+}
+.coracco .c-ticket-remain { text-align: center; margin: 12px 0 4px; font-size: 1.3rem; font-weight: 600; }
+.coracco .c-ticket-remain strong { font-size: 3.1rem; font-weight: 800; margin: 0 6px; vertical-align: -3px; }
+.coracco .c-ticket-avail { text-align: center; font-size: 0.95rem; opacity: .92; }
+.coracco .c-gauge { height: 14px; border-radius: 8px; background: var(--c-gauge-rest); margin: 14px 0 6px; overflow: hidden; }
+.coracco .c-gauge-fill { height: 100%; background: var(--c-gauge-used); border-radius: 8px; }
+.coracco .c-ticket-divider { height: 1px; background: rgba(255,255,255,.18); margin: 18px 0; }
+.coracco .c-ticket-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.coracco .c-plan { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.coracco .c-next { text-align: right; font-size: 0.95rem; line-height: 1.4; }
+.coracco .c-next small { opacity: .85; }
+.coracco .c-expire {
+  margin-top: 16px; background: var(--c-warnbg); color: var(--c-warntx);
+  border-radius: 12px; padding: 12px 16px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px; font-size: 0.95rem;
+}
+
+/* 今月の依頼 */
+.coracco .c-sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.coracco .c-sec-head > span { font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.coracco .c-sec-head a { color: var(--c-link); font-size: 0.92rem; font-weight: 600; }
+.coracco .c-req-card {
+  background: var(--c-card); border-radius: 16px; padding: 16px 18px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05); margin-bottom: 12px; color: var(--c-text);
+}
+.coracco .c-req-ico { width: 38px; height: 38px; flex-shrink: 0; border-radius: 10px; background: #EEF1FB; display: grid; place-items: center; font-size: 1rem; }
+.coracco .c-req-body { flex: 1; min-width: 0; }
+.coracco .c-req-toprow { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.coracco .c-req-title { font-weight: 700; font-size: 1rem; }
+.coracco .c-req-date { font-size: 0.85rem; color: #8A93A3; white-space: nowrap; }
+.coracco .c-req-badge { display: inline-block; margin-top: 6px; font-size: 0.78rem; font-weight: 700; padding: 3px 10px; border-radius: 10px; }
+.coracco .c-req-badge.prog { background: var(--c-prog-bg); color: var(--c-prog-tx); }
+.coracco .c-req-badge.done { background: var(--c-done-bg); color: var(--c-done-tx); }
+.coracco .c-req-arrow { color: #B8BECB; font-size: 1.3rem; flex-shrink: 0; }
+
+@media (max-width: 520px) {
+  .coracco .c-brand { font-size: 1.15rem; }
+  .coracco .c-user { font-size: 0.82rem; gap: 8px; }
+  .coracco .c-logo-mark { width: 38px; height: 38px; font-size: 1.2rem; }
+  .coracco .c-ticket-remain strong { font-size: 2.7rem; }
+}
