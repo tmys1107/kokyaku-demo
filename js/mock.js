@@ -208,14 +208,6 @@ const MockData = {
     { id: "r5", customer: "田中 花子", menuTitle: "Instagram投稿デザイン",  comment: "5月の新メニュー告知",          status: "completed",   estTickets: 3,    createdAt: "2026-05-12" }
   ],
 
-  // 管理者用：Googleマップの口コミ通知設定
-  reviewNotify: {
-    enabled: true,
-    channel: "LINE",
-    target: "花子さん（個人LINE）",
-    shops: ["サロン ド・ハナ", "鈴木整骨院", "カフェ Misaki"]
-  },
-
   // 管理者用：Googleマップの口コミ（新着順）
   reviews: [
     { id: "rv1", shop: "サロン ド・ハナ", author: "Yuki M.",     rating: 5, text: "丁寧なカウンセリングで仕上がりも大満足でした。また伺います！", at: "2026-06-03 09:12", unread: true,  notified: true,  replied: false },

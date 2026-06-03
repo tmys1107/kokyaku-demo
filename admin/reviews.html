@@ -30,26 +30,14 @@
 
   <main class="main">
     <h1 class="page-title">口コミ管理</h1>
-    <p class="page-subtitle">各クライアント店舗のGoogleマップ口コミをまとめて確認できます。新着が入ると設定先に通知されます。</p>
-
-    <!-- 通知設定 -->
-    <div class="notify-panel">
-      <div>
-        <div class="np-title">🔔 新着口コミ通知</div>
-        <div class="np-sub" id="notify-sub"></div>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="notify-toggle" checked>
-        <span class="slider"></span>
-      </label>
-    </div>
+    <p class="page-subtitle">各クライアント店舗のGoogleマップ口コミを、この管理画面でまとめて確認できます。</p>
 
     <!-- 統計 -->
     <div class="grid-3 section">
       <div class="stat-card">
-        <div class="stat-label">新着（未読）</div>
+        <div class="stat-label">新着（未確認）</div>
         <div><span class="stat-value" id="unread-count" style="color:#7c3aed;">—</span><span class="stat-unit">件</span></div>
-        <div class="stat-sub">通知済み</div>
+        <div class="stat-sub">まだ確認していない口コミ</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">未返信</div>
@@ -90,14 +78,6 @@
 
   <script src="../js/mock.js"></script>
   <script>
-    const n = MockData.reviewNotify;
-    document.getElementById('notify-sub').textContent =
-      `${n.channel}（${n.target}）へ通知 ・ 対象 ${n.shops.length}店舗`;
-    document.getElementById('notify-toggle').checked = n.enabled;
-    document.getElementById('notify-toggle').addEventListener('change', (e) => {
-      showToast(e.target.checked ? '口コミ通知をオンにしました（デモ）' : '口コミ通知をオフにしました（デモ）');
-    });
-
     // 統計
     const reviews = MockData.reviews;
     document.getElementById('unread-count').textContent = reviews.filter(r => r.unread).length;
@@ -137,7 +117,6 @@
           <div class="review-text">${r.text}</div>
           <div class="review-meta">
             <span>${r.at}</span>
-            ${r.notified ? '<span class="tag-notified">✓ 通知済み</span>' : ''}
             ${r.replied ? '<span class="tag-replied">返信済み</span>' : ''}
           </div>
           <div class="review-actions">
