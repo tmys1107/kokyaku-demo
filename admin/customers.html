@@ -3,32 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>顧客管理 - Web Studio</title>
+  <title>顧客管理 - coracco design</title>
   <link rel="stylesheet" href="../css/style.css">
 </head>
-<body>
+<body class="coracco">
 
-  <header class="app-header">
-    <div class="app-header-inner">
-      <div class="logo">
-        <span class="logo-mark">W</span>
-        <span>Web Studio <small style="color:var(--text-light);font-weight:normal;">管理画面</small></span>
+  <header class="c-header">
+    <div class="c-header-inner">
+      <div class="c-logo">
+        <span class="c-logo-mark">C</span>
+        <span class="c-brand">coracco design <small>管理画面</small></span>
       </div>
-      <nav class="nav">
-        <a href="index.html">ダッシュボード</a>
-        <a href="customers.html" class="active">顧客</a>
-        <a href="requests.html">依頼管理</a>
-        <a href="menu.html">メニュー</a>
-        <a href="reviews.html">口コミ</a>
-      </nav>
-      <div class="user-info">
-        <span>管理者</span>
-        <a href="../login.html" class="logout-link">ログアウト</a>
+      <div class="c-user">
+        <span class="c-user-name">👤 管理者</span>
+        <span class="c-divider-v"></span>
+        <a href="../login.html" class="c-logout">⤴ ログアウト</a>
       </div>
     </div>
   </header>
 
   <main class="main">
+    <nav class="c-nav-card">
+      <a class="c-tab" href="index.html"><span class="c-tab-ico">🏠</span><span>ダッシュボード</span></a>
+      <a class="c-tab active" href="customers.html"><span class="c-tab-ico">👥</span><span>顧客</span></a>
+      <a class="c-tab" href="requests.html"><span class="c-tab-ico">📋</span><span>依頼管理</span></a>
+      <a class="c-tab" href="menu.html"><span class="c-tab-ico">🗂️</span><span>メニュー</span></a>
+      <a class="c-tab" href="reviews.html"><span class="c-tab-ico">⭐</span><span>口コミ</span></a>
+    </nav>
     <h1 class="page-title">顧客管理</h1>
     <p class="page-subtitle">契約中の顧客一覧。チケットの付与や調整を行えます。</p>
 

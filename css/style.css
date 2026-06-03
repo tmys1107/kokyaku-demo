@@ -876,6 +876,10 @@ a { color: inherit; text-decoration: none; }
   --c-card:#FFFFFF; --c-line:#E7E0D6;
   --c-prog-bg:#E9EEFF; --c-prog-tx:#2F5BDB;
   --c-done-bg:#E8F4E6; --c-done-tx:#3B8A4D;
+  /* 既存コンポーネントを coracco パレットへ一括再マッピング */
+  --primary:#2F5BDB; --primary-dark:#243F9B; --primary-light:#E9EEFF;
+  --bg:#F8F4ED; --card-bg:#FFFFFF; --text:#20293A; --text-light:#6B7280;
+  --border:#E7E0D6; --success:#3B8A4D; --danger:#D85A4A; --info:#2F5BDB; --warning:#F28A3D;
   background: var(--c-bg);
   color: var(--c-text);
 }
@@ -972,3 +976,43 @@ a { color: inherit; text-decoration: none; }
   .coracco .c-logo-mark { width: 38px; height: 38px; font-size: 1.2rem; }
   .coracco .c-ticket-remain strong { font-size: 2.7rem; }
 }
+
+/* ===== coracco 全ページ統一：コンテンツ調整 ===== */
+.coracco .main { max-width: 760px; padding-top: 8px; }
+.coracco .c-brand small { font-weight: normal; color: var(--c-text); opacity: .55; font-size: 0.8rem; }
+/* バッジを仕様の配色に */
+.coracco .badge-in_progress { background: #E9EEFF; color: #2F5BDB; }
+.coracco .badge-completed   { background: #E8F4E6; color: #3B8A4D; }
+/* カードは角丸を大きめにして新デザインと馴染ませる */
+.coracco .card,
+.coracco .menu-card,
+.coracco .request-card,
+.coracco .table-wrap,
+.coracco .stat-card { border-radius: 16px; }
+
+/* 共有情報パネル（coracco版） */
+.coracco .c-info-card {
+  background: var(--c-card); border-radius: 16px; padding: 4px 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05); margin-bottom: 24px;
+}
+.coracco .c-info-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 0; border-bottom: 1px solid var(--c-line); font-size: 0.92rem;
+}
+.coracco .c-info-row:last-child { border-bottom: none; }
+.coracco .c-info-ico {
+  width: 34px; height: 34px; flex-shrink: 0; border-radius: 9px;
+  background: #FDEFE3; color: #F28A3D; display: grid; place-items: center;
+}
+.coracco .c-info-label { color: #8A93A3; width: 116px; flex-shrink: 0; }
+.coracco .c-info-val { font-weight: 600; word-break: break-all; }
+.coracco .c-info-val a { color: var(--c-link); }
+@media (max-width: 520px) {
+  .coracco .c-info-row { flex-wrap: wrap; }
+  .coracco .c-info-label { width: auto; }
+}
+
+/* ログイン画面（coracco） */
+.coracco.login-page { background: linear-gradient(135deg, #F8F4ED 0%, #F3ECDF 100%); }
+.coracco .logo-mark { background: var(--c-logo); }
+.coracco .login-logo .logo span:last-child { color: var(--c-text); }

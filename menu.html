@@ -3,32 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>施策メニュー一覧 - Web Studio</title>
+  <title>施策メニュー一覧 - coracco design</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="coracco">
 
-  <header class="app-header">
-    <div class="app-header-inner">
-      <div class="logo">
-        <span class="logo-mark">W</span>
-        <span>Web Studio</span>
+  <header class="c-header">
+    <div class="c-header-inner">
+      <div class="c-logo">
+        <span class="c-logo-mark">C</span>
+        <span class="c-brand">coracco design</span>
       </div>
-      <nav class="nav">
-        <a href="dashboard.html">ダッシュボード</a>
-        <a href="menu.html" class="active">施策メニュー</a>
-        <a href="requests.html">依頼履歴</a>
-        <a href="monthly-policy.html">月次方針</a>
-        <a href="monthly-report.html">月次レポート</a>
-      </nav>
-      <div class="user-info">
-        <span id="user-name"></span>
-        <a href="login.html" class="logout-link">ログアウト</a>
+      <div class="c-user">
+        <span class="c-user-name">👤 <span id="user-name"></span></span>
+        <span class="c-divider-v"></span>
+        <a href="login.html" class="c-logout">⤴ ログアウト</a>
       </div>
     </div>
   </header>
 
   <main class="main">
+    <nav class="c-nav-card">
+      <a class="c-tab" href="dashboard.html"><span class="c-tab-ico">🏠</span><span>ダッシュボード</span></a>
+      <a class="c-tab active" href="menu.html"><span class="c-tab-ico">📋</span><span>施策メニュー</span></a>
+      <a class="c-tab" href="requests.html"><span class="c-tab-ico">🕘</span><span>依頼履歴</span></a>
+      <a class="c-tab" href="monthly-policy.html"><span class="c-tab-ico">🎯</span><span>月次方針</span></a>
+      <a class="c-tab" href="monthly-report.html"><span class="c-tab-ico">📊</span><span>月次レポート</span></a>
+    </nav>
     <h1 class="page-title">施策メニュー一覧</h1>
     <p class="page-subtitle">気になる施策を選んで依頼してください。表示は<strong>目安チケット数</strong>です。実際の必要数は内容を確認のうえお見積もりし、ご承認いただいてから確定します。</p>
 
