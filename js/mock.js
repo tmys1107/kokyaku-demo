@@ -206,6 +206,24 @@ const MockData = {
     { id: "r3", customer: "田中 花子", menuTitle: "Webサイト導線改善",      comment: "予約導線の改善",              status: "in_progress", estTickets: 5,    createdAt: "2026-05-28" },
     { id: "r7", customer: "佐藤 美咲", menuTitle: "Instagram投稿デザイン",  comment: "新商品の投稿3枚",             status: "in_progress", estTickets: 3,    createdAt: "2026-05-30" },
     { id: "r5", customer: "田中 花子", menuTitle: "Instagram投稿デザイン",  comment: "5月の新メニュー告知",          status: "completed",   estTickets: 3,    createdAt: "2026-05-12" }
+  ],
+
+  // 管理者用：Googleマップの口コミ通知設定
+  reviewNotify: {
+    enabled: true,
+    channel: "LINE",
+    target: "花子さん（個人LINE）",
+    shops: ["サロン ド・ハナ", "鈴木整骨院", "カフェ Misaki"]
+  },
+
+  // 管理者用：Googleマップの口コミ（新着順）
+  reviews: [
+    { id: "rv1", shop: "サロン ド・ハナ", author: "Yuki M.",     rating: 5, text: "丁寧なカウンセリングで仕上がりも大満足でした。また伺います！", at: "2026-06-03 09:12", unread: true,  notified: true,  replied: false },
+    { id: "rv2", shop: "鈴木整骨院",       author: "けんた",       rating: 4, text: "腰の痛みがだいぶ楽になりました。予約も取りやすいです。",       at: "2026-06-02 20:40", unread: true,  notified: true,  replied: false },
+    { id: "rv3", shop: "カフェ Misaki",    author: "haru_cafe",    rating: 5, text: "新作のラテアートが可愛すぎる！雰囲気も最高でした。",           at: "2026-06-02 13:05", unread: true,  notified: true,  replied: false },
+    { id: "rv4", shop: "サロン ド・ハナ", author: "Tomoko S.",    rating: 2, text: "予約時間に少し待たされました。技術は良かったので残念。",       at: "2026-06-01 18:22", unread: false, notified: true,  replied: true  },
+    { id: "rv5", shop: "鈴木整骨院",       author: "Google ユーザー", rating: 5, text: "スタッフさんが親切で通いやすいです。",                       at: "2026-05-31 11:30", unread: false, notified: true,  replied: true  },
+    { id: "rv6", shop: "カフェ Misaki",    author: "もも",          rating: 3, text: "コーヒーは美味しいですが、お昼時は混んでいて入れませんでした。", at: "2026-05-30 12:48", unread: false, notified: true,  replied: false }
   ]
 };
 
@@ -237,7 +255,8 @@ const fmt = {
   },
   statusBadge: (status) =>
     `<span class="badge badge-${status}">${StatusLabels[status] ?? status}</span>`,
-  needsClientAction: (status) => ClientActionStatuses.includes(status)
+  needsClientAction: (status) => ClientActionStatuses.includes(status),
+  stars: (n) => '★★★★★☆☆☆☆☆'.slice(5 - n, 10 - n)
 };
 
 // ===== トースト =====

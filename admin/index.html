@@ -19,6 +19,7 @@
         <a href="customers.html">顧客</a>
         <a href="requests.html">依頼管理</a>
         <a href="menu.html">メニュー</a>
+        <a href="reviews.html">口コミ</a>
       </nav>
       <div class="user-info">
         <span>管理者</span>
@@ -50,6 +51,15 @@
       </div>
     </div>
 
+    <!-- 新着口コミ通知バナー -->
+    <a href="reviews.html" id="review-banner" class="notify-panel section" style="text-decoration:none; cursor:pointer; display:none;">
+      <div>
+        <div class="np-title">🔔 新着の口コミがあります</div>
+        <div class="np-sub" id="review-banner-sub"></div>
+      </div>
+      <span class="btn btn-primary btn-sm">口コミを見る →</span>
+    </a>
+
     <!-- 最新の依頼 -->
     <section class="section">
       <div class="section-head">
@@ -67,6 +77,14 @@
       MockData.allRequests.filter(r => r.status === 'pending').length;
     document.getElementById('progress-count').textContent =
       MockData.allRequests.filter(r => r.status === 'in_progress').length;
+
+    // 新着口コミバナー
+    const unreadReviews = MockData.reviews.filter(r => r.unread);
+    if (unreadReviews.length > 0) {
+      document.getElementById('review-banner').style.display = 'flex';
+      document.getElementById('review-banner-sub').textContent =
+        `${unreadReviews.length}件の新着口コミ（${[...new Set(unreadReviews.map(r => r.shop))].join('・')}）`;
+    }
 
     const recent = MockData.allRequests.slice(0, 5);
     document.getElementById('recent-requests').innerHTML = recent.map(r => `

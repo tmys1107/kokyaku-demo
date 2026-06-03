@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>口コミ - Web Studio 管理画面</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div class="logo">
+        <span class="logo-mark">W</span>
+        <span>Web Studio <small style="color:var(--text-light);font-weight:normal;">管理画面</small></span>
+      </div>
+      <nav class="nav">
+        <a href="index.html">ダッシュボード</a>
+        <a href="customers.html">顧客</a>
+        <a href="requests.html">依頼管理</a>
+        <a href="menu.html">メニュー</a>
+        <a href="reviews.html" class="active">口コミ</a>
+      </nav>
+      <div class="user-info">
+        <span>管理者</span>
+        <a href="../login.html" class="logout-link">ログアウト</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <h1 class="page-title">口コミ管理</h1>
+    <p class="page-subtitle">各クライアント店舗のGoogleマップ口コミをまとめて確認できます。新着が入ると設定先に通知されます。</p>
+
+    <!-- 通知設定 -->
+    <div class="notify-panel">
+      <div>
+        <div class="np-title">🔔 新着口コミ通知</div>
+        <div class="np-sub" id="notify-sub"></div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="notify-toggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <!-- 統計 -->
+    <div class="grid-3 section">
+      <div class="stat-card">
+        <div class="stat-label">新着（未読）</div>
+        <div><span class="stat-value" id="unread-count" style="color:#7c3aed;">—</span><span class="stat-unit">件</span></div>
+        <div class="stat-sub">通知済み</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">未返信</div>
+        <div><span class="stat-value" id="noreply-count" style="color:var(--warning);">—</span><span class="stat-unit">件</span></div>
+        <div class="stat-sub">返信対応が必要</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">平均評価</div>
+        <div><span class="stat-value" id="avg-rating">—</span><span class="stat-unit">/ 5.0</span></div>
+        <div class="stat-sub" id="avg-stars" style="color:#f59e0b;"></div>
+      </div>
+    </div>
+
+    <!-- 店舗フィルター -->
+    <div class="filter-pills" id="shop-pills"></div>
+
+    <div id="review-list"></div>
+  </main>
+
+  <!-- 返信モーダル -->
+  <div class="modal-backdrop" id="reply-modal">
+    <div class="modal">
+      <div class="modal-title">口コミに返信する</div>
+      <div style="background:var(--bg); padding:12px 14px; border-radius:8px; margin-bottom:16px;">
+        <div class="review-stars" id="reply-stars">—</div>
+        <div style="font-size:0.9rem; margin-top:6px;" id="reply-text">—</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">返信文（Googleマップに公開されます）</label>
+        <textarea class="form-textarea" id="reply-input" placeholder="この度はご来店ありがとうございました。…"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeReply()">キャンセル</button>
+        <button class="btn btn-primary" onclick="submitReply()">返信を送信</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/mock.js"></script>
+  <script>
+    const n = MockData.reviewNotify;
+    document.getElementById('notify-sub').textContent =
+      `${n.channel}（${n.target}）へ通知 ・ 対象 ${n.shops.length}店舗`;
+    document.getElementById('notify-toggle').checked = n.enabled;
+    document.getElementById('notify-toggle').addEventListener('change', (e) => {
+      showToast(e.target.checked ? '口コミ通知をオンにしました（デモ）' : '口コミ通知をオフにしました（デモ）');
+    });
+
+    // 統計
+    const reviews = MockData.reviews;
+    document.getElementById('unread-count').textContent = reviews.filter(r => r.unread).length;
+    document.getElementById('noreply-count').textContent = reviews.filter(r => !r.replied).length;
+    const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+    document.getElementById('avg-rating').textContent = avg.toFixed(1);
+    document.getElementById('avg-stars').textContent = fmt.stars(Math.round(avg));
+
+    // 店舗フィルター
+    const shops = ['all', ...new Set(reviews.map(r => r.shop))];
+    let currentShop = 'all';
+    document.getElementById('shop-pills').innerHTML = shops.map(s => `
+      <button class="filter-pill ${s === 'all' ? 'active' : ''}" data-shop="${s}">
+        ${s === 'all' ? 'すべての店舗' : s}
+      </button>
+    `).join('');
+
+    function render() {
+      const list = currentShop === 'all'
+        ? reviews
+        : reviews.filter(r => r.shop === currentShop);
+      const container = document.getElementById('review-list');
+      if (list.length === 0) {
+        container.innerHTML = '<p class="empty-msg">口コミはありません。</p>';
+        return;
+      }
+      container.innerHTML = list.map(r => `
+        <div class="review-card ${r.unread ? 'is-unread' : ''} ${r.rating <= 2 ? 'is-low' : ''}">
+          <div class="review-head">
+            <div>
+              <span class="review-shop">${r.shop}</span>
+              <span class="review-author">${r.author}</span>
+            </div>
+            ${r.unread ? '<span class="tag-unread">新着</span>' : ''}
+          </div>
+          <div class="review-stars">${fmt.stars(r.rating)}</div>
+          <div class="review-text">${r.text}</div>
+          <div class="review-meta">
+            <span>${r.at}</span>
+            ${r.notified ? '<span class="tag-notified">✓ 通知済み</span>' : ''}
+            ${r.replied ? '<span class="tag-replied">返信済み</span>' : ''}
+          </div>
+          <div class="review-actions">
+            ${r.replied
+              ? ''
+              : `<button class="btn btn-primary btn-sm" onclick="openReply('${r.id}')">返信する</button>`}
+            ${r.unread
+              ? `<button class="btn btn-secondary btn-sm" onclick="markRead('${r.id}')">既読にする</button>`
+              : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentShop = btn.dataset.shop;
+        render();
+      });
+    });
+
+    function markRead(id) {
+      const r = reviews.find(x => x.id === id);
+      r.unread = false;
+      document.getElementById('unread-count').textContent = reviews.filter(x => x.unread).length;
+      render();
+    }
+
+    // 返信モーダル
+    let replyTarget = null;
+    function openReply(id) {
+      replyTarget = reviews.find(x => x.id === id);
+      document.getElementById('reply-stars').textContent = fmt.stars(replyTarget.rating);
+      document.getElementById('reply-text').textContent = `「${replyTarget.text}」`;
+      document.getElementById('reply-input').value = '';
+      document.getElementById('reply-modal').classList.add('active');
+    }
+    function closeReply() {
+      document.getElementById('reply-modal').classList.remove('active');
+    }
+    function submitReply() {
+      const v = document.getElementById('reply-input').value.trim();
+      if (!v) { showToast('返信文を入力してください'); return; }
+      replyTarget.replied = true;
+      replyTarget.unread = false;
+      closeReply();
+      document.getElementById('unread-count').textContent = reviews.filter(x => x.unread).length;
+      document.getElementById('noreply-count').textContent = reviews.filter(x => !x.replied).length;
+      showToast('返信を送信しました（デモ）');
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>
